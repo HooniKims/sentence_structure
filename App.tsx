@@ -36,35 +36,41 @@ const App: React.FC = () => {
   };
 
   return (
-    <div className="min-h-screen pb-20 bg-gradient-to-b from-blue-50 to-indigo-50 selection:bg-yellow-200 selection:text-yellow-900">
-      <div className="container mx-auto px-4 max-w-5xl">
-        <Header />
-        
-        <InputArea 
-          value={inputText}
-          onChange={setInputText}
-          onAnalyze={handleAnalyze} 
-          isLoading={isLoading} 
-        />
+    <div className="app-container">
+      <Header />
+      
+      <InputArea 
+        value={inputText}
+        onChange={setInputText}
+        onAnalyze={handleAnalyze} 
+        isLoading={isLoading} 
+      />
 
-        {error && (
-          <div className="max-w-3xl mx-auto bg-red-100 border-l-4 border-red-500 text-red-700 p-4 rounded-r shadow-md mb-8 animate-pop">
-            <p className="font-bold">앗, 오류가 발생했어요!</p>
-            <p>{error}</p>
-          </div>
-        )}
+      {error && (
+        <div style={{ 
+          background: '#FEF2F2', 
+          borderLeft: '4px solid #EF4444', 
+          color: '#991B1B', 
+          padding: '16px', 
+          borderRadius: '0 8px 8px 0',
+          maxWidth: '800px',
+          margin: '0 auto'
+        }}>
+          <p style={{ fontWeight: 'bold' }}>앗, 오류가 발생했어요!</p>
+          <p>{error}</p>
+        </div>
+      )}
 
-        <Visualizer result={result} />
-        
-        <GrammarGuide />
-        
-        <ExampleSelector onSelect={handleExampleSelect} />
+      <Visualizer result={result} />
+      
+      <GrammarGuide />
+      
+      <ExampleSelector onSelect={handleExampleSelect} />
 
-        <footer className="text-center text-gray-400 text-sm py-8">
-          <p>Powered by Google Gemini 2.5 Flash</p>
-          <p>© 2025 Sentence Structure Playground. All rights reserved.</p>
-        </footer>
-      </div>
+      <footer className="footer">
+        <p>Powered by Google Gemini 2.5 Flash</p>
+        <p>© 2025 Sentence Structure Playground. All rights reserved.</p>
+      </footer>
     </div>
   );
 };

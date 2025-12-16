@@ -28,14 +28,15 @@ export const EXAMPLE_SENTENCES: ExampleSentence[] = [
   { text: "비가 오고 바람이 분다.", category: "이어진문장 (대등)" },
 ];
 
-export const CLAUSE_COLORS = {
-  [ClauseType.NONE]: "bg-gray-100 border-gray-300 text-gray-700",
-  [ClauseType.MAIN]: "bg-white border-gray-200 text-gray-800",
-  [ClauseType.NOUN]: "bg-blue-100 border-blue-400 text-blue-800",
-  [ClauseType.ADNOMINAL]: "bg-green-100 border-green-400 text-green-800",
-  [ClauseType.ADVERBIAL]: "bg-yellow-100 border-yellow-400 text-yellow-800",
-  [ClauseType.PREDICATE]: "bg-purple-100 border-purple-400 text-purple-800",
-  [ClauseType.QUOTATIVE]: "bg-orange-100 border-orange-400 text-orange-800",
+// Returns semantic CSS class names defined in index.css
+export const CLAUSE_CLASSES = {
+  [ClauseType.NONE]: "clause-none",
+  [ClauseType.MAIN]: "clause-main",
+  [ClauseType.NOUN]: "clause-noun",
+  [ClauseType.ADNOMINAL]: "clause-adnominal",
+  [ClauseType.ADVERBIAL]: "clause-adverbial",
+  [ClauseType.PREDICATE]: "clause-predicate",
+  [ClauseType.QUOTATIVE]: "clause-quotative",
 };
 
 export const CLAUSE_LABELS = {
