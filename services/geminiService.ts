@@ -58,6 +58,21 @@ const analysisSchema: Schema = {
   required: ["sentenceType", "complexType", "segments", "explanation"]
 };
 
+// Helper function to retry operations
+async function retryOperation<T>(operation: () => Promise<T>, retries = 3, delay = 1000): Promise<T> {
+  try {
+    return await operation();
+  } catch (error: any) {
+    // Retry on 503 (Service Unavailable) or 429 (Too Many Requests)
+    if (retries > 0 && (error.code === 503 || error.status === 503 || error.status === 429 || error.message?.includes('overloaded'))) {
+      console.warn(`Gemini API overloaded. Retrying in ${delay}ms... (${retries} retries left)`);
+      await new Promise(resolve => setTimeout(resolve, delay));
+      return retryOperation(operation, retries - 1, delay * 2); // Exponential backoff
+    }
+    throw error;
+  }
+}
+
 export const analyzeSentence = async (sentence: string): Promise<AnalysisResult> => {
   const apiKey = getApiKey();
   if (!apiKey) {
@@ -83,24 +98,32 @@ export const analyzeSentence = async (sentence: string): Promise<AnalysisResult>
   `;
 
   try {
-    const response = await ai.models.generateContent({
-      model: "gemini-2.5-flash",
-      contents: [
-        { role: "user", parts: [{ text: `다음 문장을 분석해줘: "${sentence}"` }] }
-      ],
-      config: {
-        systemInstruction: systemPrompt,
-        responseMimeType: "application/json",
-        responseSchema: analysisSchema
-      }
+    const response = await retryOperation(async () => {
+      return await ai.models.generateContent({
+        model: "gemini-2.5-flash",
+        contents: [
+          { role: "user", parts: [{ text: `다음 문장을 분석해줘: "${sentence}"` }] }
+        ],
+        config: {
+          systemInstruction: systemPrompt,
+          responseMimeType: "application/json",
+          responseSchema: analysisSchema
+        }
+      });
     });
 
     const text = response.text;
     if (!text) throw new Error("No response from AI");
 
     return JSON.parse(text) as AnalysisResult;
-  } catch (error) {
+  } catch (error: any) {
     console.error("Gemini Analysis Error:", error);
-    throw new Error("문장을 분석하는 도중 선생님이 잠시 자리를 비웠어요! 다시 시도해주세요.");
+    
+    let userMessage = "문장을 분석하는 도중 선생님이 잠시 자리를 비웠어요! 다시 시도해주세요.";
+    if (error.code === 503 || error.message?.includes('overloaded')) {
+      userMessage = "사용자가 너무 많아 로봇 선생님이 바빠요. 3초 뒤에 다시 버튼을 눌러주세요! 😵‍💫";
+    }
+    
+    throw new Error(userMessage);
   }
 };
