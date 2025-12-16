@@ -1,0 +1,5 @@
+{
+  "name": "문장 구조 놀이터 (Sentence Structure Playground)",
+  "description": "중고등학생을 위한 재미있는 국어 문법 학습 도구입니다. 문장을 입력하면 홑문장/겹문장 여부와 안긴문장의 종류를 시각적으로 분석해 줍니다.",
+  "requestFramePermissions": []
+}
